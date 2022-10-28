@@ -1,5 +1,6 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 module.exports = {
     mode: 'development',
     entry: {
@@ -9,7 +10,8 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].[contenthash].js',
-        clean: true
+        clean: true,
+        assetModuleFilename: '[name][ext]'
     },
     devtool: 'source-map',
     devServer: {
@@ -31,6 +33,20 @@ module.exports = {
                     'css-loader',
                     'sass-loader'
                 ]
+            },
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                use:{
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env']
+                    }
+                }
+            },
+            {
+                test: /\.(png|svg|jpg|jpeg}gif)$/i,
+                type: 'asset/resource'
             }
         ]
     },
@@ -39,6 +55,8 @@ module.exports = {
             title: 'webpack App',
             filename: 'index.html',
             template: 'src/html/template.html'
-        })
+        }),
+
+        new BundleAnalyzerPlugin()
     ]
 }
